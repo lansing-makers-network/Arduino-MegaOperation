@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <FastLED.h>
-#include "../organs.h"
+#include "../innards.h"
 
 // How many leds in your strip?
 #define NUM_LEDS 335
@@ -20,37 +20,39 @@ void setup() {
   FastLED.addLeds<WS2812, DATA_PIN, GRB>(leds, NUM_LEDS);  // GRB ordering is typical
 }
 
+void fill(Organ org, CRGB::HTMLColorCode color, unsigned long delay_ms) {
+  for (int i=org.start; i < org.start+org.len;  i++) {
+    if (i==45) continue;
+    leds[i] = color;
+    FastLED.show();
+    delay(delay_ms);
+  }
+}
+
+void blink(Organ org, CRGB::HTMLColorCode color, unsigned long delay_ms) {
+  for (int i=org.start; i < org.start+org.len;  i++) {
+    if (i==45) continue;
+    leds[i] = color;
+    FastLED.show();
+    delay(delay_ms);
+    leds[i] = CRGB::Black;
+  }
+}
+
+void goround(CRGB::HTMLColorCode color) {
+    for (int k=0;  k<ORGAN_COUNT;  k++) {
+      blink(BodyMap[k], color, 50);
+      fill(BodyMap[k], color, 25);
+      fill(BodyMap[k], CRGB::Black, 25);
+    }
+}
+
 void loop() {
-   // Turn the LED on, then pause
-   for (int i=0;  i<NUM_LEDS; i++) {
-    if (i==45)
-      continue;
-    leds[i] = CRGB::Red;
-    FastLED.show();
-    delay(DELAY);
-    leds[i] = CRGB::Black;
-    FastLED.show();
-   }
-
-   for (int i=0;  i<NUM_LEDS; i++) {
-    if (i==45)
-      continue;
-    leds[i] = CRGB::Green;
-    FastLED.show();
-    delay(DELAY);
-    leds[i] = CRGB::Black;
-    FastLED.show();
-   }
-
-   for (int i=0;  i<NUM_LEDS; i++) {
-    if (i==45)
-      continue;
-    leds[i] = CRGB::Blue;
-    FastLED.show();
-    delay(DELAY);
-    leds[i] = CRGB::Black;
-    FastLED.show();
-   }
-
-
+  goround(CRGB::Red);
+  goround(CRGB::Green);
+  goround(CRGB::Blue);
+  goround(CRGB::Yellow);
+  goround(CRGB::Purple);
+  goround(CRGB::Turquoise);
+  goround(CRGB::White);
 }
