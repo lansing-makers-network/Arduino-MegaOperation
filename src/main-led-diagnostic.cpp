@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <FastLED.h>
-#include "../innards.h"
+#include "innards.h"
 
 // How many leds in your strip?
 #define NUM_LEDS 335
