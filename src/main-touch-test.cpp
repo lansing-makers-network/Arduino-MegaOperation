@@ -8,7 +8,7 @@ const uint8_t IRQ_PIN = 2;
 const uint8_t TOUCH_ADDR = 0x5A;
 
 // You can have up to 4 on one i2c bus but one is enough for testing!
-Adafruit_MPR121 cap = Adafruit_MPR121();
+Adafruit_MPR121 touch = Adafruit_MPR121();
 
 void touchEvent()
 {
@@ -19,7 +19,7 @@ void touchEvent()
   static uint16_t currtouched = 0;
 
   // Get the currently touched pads
-  currtouched = cap.touched();
+  currtouched = touch.touched();
   
   for (uint8_t i=0; i<12; i++) {
     // it if *is* touched and *wasnt* touched before, alert!
@@ -39,15 +39,15 @@ void touchEvent()
   return;
   
   // debugging info, what
-  Serial.print("\t\t\t\t\t\t\t\t\t\t\t\t\t 0x"); Serial.println(cap.touched(), HEX);
+  Serial.print("\t\t\t\t\t\t\t\t\t\t\t\t\t 0x"); Serial.println(touch.touched(), HEX);
   Serial.print("Filt: ");
   for (uint8_t i=0; i<12; i++) {
-    Serial.print(cap.filteredData(i)); Serial.print("\t");
+    Serial.print(touch.filteredData(i)); Serial.print("\t");
   }
   Serial.println();
   Serial.print("Base: ");
   for (uint8_t i=0; i<12; i++) {
-    Serial.print(cap.baselineData(i)); Serial.print("\t");
+    Serial.print(touch.baselineData(i)); Serial.print("\t");
   }
   Serial.println();
 }
@@ -62,7 +62,7 @@ void setup() {
 
   // Default address is 0x5A, if tied to 3.3V its 0x5B
   // If tied to SDA its 0x5C and if SCL then 0x5D
-  if (!cap.begin(TOUCH_ADDR)) {
+  if (!touch.begin(TOUCH_ADDR)) {
     Serial.println("MPR121 not found, check wiring?");
     while (1);
   }
