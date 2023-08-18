@@ -14,15 +14,11 @@ CRGB pixels[NumPixels];
 
 // Color wash offset -- the first pixels are
 // in the nose, and behind a red lens.
-const uint8_t offset = 16;
+const uint8_t nose_offset = 16;
 
-void setup() {
-  // put your setup code here, to run once:
-  FastLED.addLeds<WS2812, DATA_PIN, GRB>(pixels, NumPixels);  // GRB ordering is typical
-}
-
-const uint16_t step_forward = 17;
-const uint16_t step_backward = -13;
+const uint16_t step_forward = 71;
+const uint16_t step_backward = -28;
+const uint16_t reverse_factor = 8;
 
 // Time counter for color wash.
 uint16_t time_forward = 0;
@@ -31,26 +27,48 @@ uint16_t time_backward = 0;
 // Time counter for nose ring
 uint16_t time_nose = 0;
 // Index of reverse pixels (counts mod 16)
-uint16_t reverse_index = 0;
+uint16_t reverse_offset = 0;
+uint16_t reverse_counter = reverse_factor;
+
+
+void setup() {
+  // put your setup code here, to run once:
+  FastLED.addLeds<WS2812, DATA_PIN, GRB>(pixels, NumPixels);  // GRB ordering is typical
+
+  Serial.begin(115200);
+
+  for (uint8_t i=0;  i<nose_offset; i++) {
+    pixels[i] = CRGB::Black;
+  }
+}
+
+
 
 void loop() {
     time_forward += step_forward;
     time_backward += step_backward;
 
+    if (--reverse_counter == 0) {
+      reverse_counter = reverse_factor;
+      
+      pixels[reverse_offset] = CRGB::Black;
+      reverse_offset = (reverse_offset-1) & 0xf;
+      pixels[reverse_offset] = CRGB::Red;
+      //Serial.println(reverse_offset);
+    }
+
     // Color the wash pixels
-    uint16_t start = time_forward;
-    for (int i = 0; i < NumPixels;  i++) {
-      uint16_t hue = start + (i << 6);
+    for (int i = nose_offset; i < NumPixels;  i++) {
+      uint16_t hue = time_forward + (i << 6);
       uint8_t hueb = hue >> 8;
       pixels[i].setHSV(hueb, 192, 128);
     }
 
     // Overlay the reverse
-    start = time_backward;
-    for (int i = reverse_index; i < NumPixels; i+=16) {
-      uint16_t hue = start + (i << 6);
+    for (int i = reverse_offset; i < NumPixels; i+=16) {
+      uint16_t hue = time_backward + (i << 6);
       uint8_t hueb = hue >> 8;
-      pixels[i].setHSV(hueb, 128, 83);
+      pixels[i].setHSV(hueb, 255, 255);
     }
 
     FastLED.show();
