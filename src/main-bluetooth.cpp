@@ -1,4 +1,4 @@
-// Communiate over Bluetooth module
+// Communiate over HC-05 Bluetooth module
 
 #include <Arduino.h>
 #include "SoftwareSerial.h"
