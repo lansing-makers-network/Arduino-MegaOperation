@@ -10,8 +10,8 @@
 #define PIN_PWR_INV 6
 #define PIN_LED 13
 
-const long baudrate_AT = 38400;
-const long baudrate_comm = 115200;
+const long bitrate_AT = 38400;
+const long bitrate_comm = 115200;
 
 SoftwareSerial BT(PIN_RX, PIN_TX);
 boolean NL = true;
@@ -41,18 +41,20 @@ void loop() {
     if (Serial.available()) {
         char c = Serial.read();
         switch (c) {
+
             case '@':
                 // Enter AT mode
                 //BT.end();
                 digitalWrite(PIN_AT, HIGH);
-                //BT.begin(baudrate_AT);
+                //BT.begin(bitrate_AT);
                 Serial.println("AT mode ON");
                 break;
+
             case '~':
                 // Exit AT mode
                 //BT.end();
                 digitalWrite(PIN_AT, LOW);
-                //BT.begin(baudrate_comm);
+                //BT.begin(bitrate_comm);
                 Serial.println("AT mode OFF");
                 break;
 
@@ -70,7 +72,7 @@ void loop() {
 
             default:
                 BT.write(c);
- 
+
                 // Echo the user input to the main window. The ">" character indicates the user entered text.
                 if (NL) { Serial.print(">");  NL = false; }
                 Serial.write(c);
