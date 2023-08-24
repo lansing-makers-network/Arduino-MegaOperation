@@ -6,11 +6,13 @@
 #define PIN_RX 2
 #define PIN_TX 3
 #define PIN_STATE 4
-#define PIN_EN 5
-#define PIN_AT_INV 6
+#define PIN_AT 5
+#define PIN_PWR_INV 6
 #define PIN_LED 13
 
-const long baudrate = 38400;
+const long baudrate_AT = 38400;
+const long baudrate_comm = 115200;
+
 SoftwareSerial BT(PIN_RX, PIN_TX);
 boolean NL = true;
  
@@ -18,18 +20,16 @@ void setup() {
     Serial.begin(115200);
 
     pinMode(PIN_STATE, INPUT);
-    pinMode(PIN_EN, OUTPUT);
-    digitalWrite(PIN_EN, HIGH);
-    pinMode(PIN_AT_INV, OUTPUT);
-    digitalWrite(PIN_AT_INV, LOW); // AT mode ON
+    pinMode(PIN_PWR_INV, OUTPUT);
+    digitalWrite(PIN_PWR_INV, HIGH); // PWR off
+    pinMode(PIN_AT, OUTPUT);
+    digitalWrite(PIN_AT, LOW); // AT mode OFF
 
     pinMode(PIN_LED, OUTPUT);
     digitalWrite(PIN_LED, LOW);
 
-    BT.begin(baudrate);
-    Serial.print("BTserial started at "); Serial.println(baudrate);
-    Serial.println(" ");
-
+    //Serial.println("BTserial waiting");
+    BT.begin(38400);
 }
 
 void loop() {
@@ -43,24 +43,31 @@ void loop() {
         switch (c) {
             case '@':
                 // Enter AT mode
-                digitalWrite(PIN_AT_INV, LOW);
-                Serial.println("AT mode on");
+                //BT.end();
+                digitalWrite(PIN_AT, HIGH);
+                //BT.begin(baudrate_AT);
+                Serial.println("AT mode ON");
                 break;
             case '~':
                 // Exit AT mode
-                digitalWrite(PIN_AT_INV, HIGH);
-                Serial.println("AT mode off");
+                //BT.end();
+                digitalWrite(PIN_AT, LOW);
+                //BT.begin(baudrate_comm);
+                Serial.println("AT mode OFF");
                 break;
+
             case '$':
-                // Enable high
-                digitalWrite(PIN_EN, HIGH);
-                Serial.println("Enabled");
+                // Power on
+                digitalWrite(PIN_PWR_INV, LOW);
+                Serial.println("Power ON");
                 break;
+
             case '%':
-                // Enable low
-                digitalWrite(PIN_EN, LOW);
-                Serial.println("Disabled");
+                // Power off
+                digitalWrite(PIN_PWR_INV, HIGH);
+                Serial.println("Power OFF");
                 break;
+
             default:
                 BT.write(c);
  
