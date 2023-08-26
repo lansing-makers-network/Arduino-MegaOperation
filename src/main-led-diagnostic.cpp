@@ -9,43 +9,48 @@
 #define DELAY 50
 
 // Define the array of pixels
-const uint16_t total_pixels = 360;
+const uint8_t nose_pixels = 16;
+const int16_t chaser_pixels = 344;
+const uint16_t total_pixels = nose_pixels + chaser_pixels;
 CRGB pixels[total_pixels];
 
-// The first pixels are in the nose.
-const uint8_t nose_pixels = 16;
-const uint16_t chaser_pixels = total_pixels - nose_pixels;
-const uint16_t nose_factor = 8;
+// The first pixels are in the nose.  The "chaser" pixels are
+// the one we animate. Pixel positions are computed from 0 -- chaser_pixels - 1,
+// and the nose_offset is added when addressing the strip.
+
+const uint8_t slow_factor = 5;
 
 struct Layer {
-  uint16_t time;
-  const int16_t step;
+  uint16_t hue;                 // Color counter
+  const int16_t hue_step;       // Color counter advance
   const uint16_t run;
   const uint16_t stride;
-  int16_t offset;
-  const int16_t advance;
+  uint16_t offset;
+  const int16_t offset_step;
   const uint8_t saturation;
   const uint8_t value;
 };
 
-const uint8_t layer_count = 2;
+const uint8_t layer_count = 4;
 Layer Layers[] = {
-  { 0,  17,  1,   1,  0,    0,  192,  128 },
-  { 0,  11,  5,  17,  0,    3,  128,  128 },
-  { 0, -28,  2,   8,  0,    5,   50,   32 },
-  { 0, -93,  1,  22,  0,  -13,  240,  240 }
+  { 0,      17,   1,   1,   0,    0,  100,   96 },
+  { 0,      11,   4,  67,   0,    3,  128,  128 },
+  { 21845, -28,   8,  33,   0,    5,  192,  128 },
+  { 43690, -45,   3,  130,  0,  -23,  240,  240 }
 };
 
-// Counts mod 16
-uint16_t mod_counter = 0;
+// Counts down mod slow_factor to produce a slower clock
+uint8_t slow_clock = slow_factor;
 
-// Counts down mod nose_factor;
-uint16_t nose_counter = nose_factor;
+// Counts mod 16, slowed down by slow_factor
+uint8_t nose_counter = 0;
+
 
 void setup() {
   FastLED.addLeds<WS2812, DATA_PIN, GRB>(pixels, total_pixels);  // GRB ordering is typical
   Serial.begin(115200);
 
+  // Turn off nose.
   for (uint8_t i=0;  i<nose_pixels; i++) {
     pixels[i] = CRGB::Black;
   }
@@ -53,50 +58,49 @@ void setup() {
 
 
 void loop() {
-    // Advance .time by .step
+    // Advance .hue by .hue_step
     for (uint8_t l = 0;  l < layer_count;  l++){
-      Layers[l].time += Layers[l].step;
+      Layers[l].hue += Layers[l].hue_step;
     }
 
-    if (--nose_counter == 0) {
-      nose_counter = nose_factor;
+    if (--slow_clock == 0) {
+      slow_clock = slow_factor;
       
-      pixels[mod_counter] = CRGB::Black;
-      mod_counter = (mod_counter-1) & 0xf;
-      pixels[mod_counter] = CRGB::Red;
-      //Serial.println(mod_counter);
+      // Advance the nose pixel
+      pixels[nose_counter] = CRGB::Black;
+      nose_counter = (nose_counter-1) & 0xf;
+      pixels[nose_counter] = CRGB::Red;
+      //Serial.println(nose_counter);
 
-      // Advance .offset by .advance
+      // Advance .offset by .offset_step
       for (uint8_t l=0;  l < layer_count;  l++) {
-        Layers[l].offset += Layers[l].advance;
+        Layers[l].offset += Layers[l].offset_step;
       }
     }
 
+    // Animate each layer
     for (uint8_t l=0;  l<layer_count;  l++) {
       if (Layers[l].stride == 1) {
         // Background layer: color every pixel
         for (uint16_t i = 0;  i < chaser_pixels;  i++) {
-          uint16_t hue = Layers[l].time + (i << 6);
+          uint16_t hue = Layers[l].hue + (i << 6);
           uint8_t hueb = hue >> 8;
           pixels[i + nose_pixels].setHSV(hueb, Layers[l].saturation, Layers[l].value);
         }
       }
       else {
         // Overlay layer: color .run pixels out of every .stride with offset
-        int16_t offset = (Layers[l].offset >> 6) % Layers[l].stride;
-        Serial.print(l);
-        Serial.print(": ");
-        for (uint8_t k = 0;  k < l;  k++) { Serial.print("  "); }
-        Serial.println(offset);
+        uint16_t offset = (Layers[l].offset >> 6) % Layers[l].stride;
+
         for (uint16_t i = 0;  i < chaser_pixels;  i+=Layers[l].stride) {
-          for (uint16_t r = 0;  r < Layers[l].run;  r++) {
-            uint16_t hue = Layers[l].time + ((i+r) << 6);
+          for (uint8_t r = 0;  r < Layers[l].run;  r++) {
+            uint16_t hue = Layers[l].hue + ((i+r) << 6);
             uint8_t hueb = hue >> 8;
-            int16_t pos = i + r + offset;
-            if (pos > chaser_pixels) { break; }
-            if (l == 1) {
-              Serial.print(pos);
-              Serial.print(' ');
+            uint16_t pos = offset + i + r;
+            if (pos > chaser_pixels) { pos -= chaser_pixels; }
+            if (pos < 0) {
+              Serial.print("pos < 0: ");
+              Serial.println(pos);
             }
             pixels[pos + nose_pixels].setHSV(hueb, Layers[l].saturation, Layers[l].value);
           }
