@@ -27,12 +27,12 @@ struct Layer {
   const uint8_t value;
 };
 
-const uint8_t layer_count = 2;
+const uint8_t layer_count = 4;
 Layer Layers[] = {
-  {     0,   17,   1,    1,   0,    0,  100,   96 },
-  {     0,   28,   8,   33,   0,    5,  192,  128 },
-  {     0,   11,   5,   67,   0,   -3,  240,  240 },
-  { 43690,  -45,   3,  130,   0,  -23,  240,  240 }
+  { 0,   17,   1,    1,   0,    0,  140,  128 },
+  { 0,   11,   8,   66,   0,    5,  192,  128 },
+  { 0,  -35,   3,  130,   0,  -23,  240,  240 },
+  { 0,   13,   5,   66,   33,  -5,  240,  240 },
 };
 
 // Counts down modulo slow_factor to produce a slower clock
@@ -76,10 +76,10 @@ void loop() {
       if (Layers[l].stride == 1) {
         // Background layer: color every pixel
         for (uint16_t i = 0;  i < chaser_pixels;  i++) {
-          //uint16_t hue = Layers[l].hue + (i << 6);
-          //uint8_t hueb = hue >> 8;
-          //pixels[i + nose_pixels].setHSV(hueb, Layers[l].saturation, Layers[l].value);
-          pixels[i + nose_pixels] = CRGB::Black;
+          uint16_t hue = Layers[l].hue + (i << 6);
+          uint8_t hueb = hue >> 8;
+          pixels[i + nose_pixels].setHSV(hueb, Layers[l].saturation, Layers[l].value);
+         // pixels[i + nose_pixels] = CRGB::Black;
         }
       }
       else {
