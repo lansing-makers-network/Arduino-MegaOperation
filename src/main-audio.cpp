@@ -14,7 +14,7 @@
 #define PIN_DREQ 3
 
 // These are the pins used for the music maker shield
-#define SHIELD_RESET  -1      // VS1053 reset pin (unused!)
+#define SHIELD_RESET  -1     // VS1053 reset pin (unused!)
 #define SHIELD_CS     7      // VS1053 chip select pin (output)
 #define SHIELD_DCS    6      // VS1053 Data/command select pin (output)
 

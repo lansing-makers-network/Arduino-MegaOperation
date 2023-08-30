@@ -1,7 +1,8 @@
 #include <Arduino.h>
 #include <FastLED.h>
+#include <Wire.h>
+#include "pinmap.h"
 
-#define DATA_PIN 4
 #define DELAY 50
 
 // Define the array of pixels
@@ -43,7 +44,7 @@ uint8_t nose_counter = 0;
 
 
 void setup() {
-  FastLED.addLeds<WS2812, DATA_PIN, GRB>(pixels, total_pixels);  // GRB ordering is typical
+  FastLED.addLeds<WS2812, PIN_PIXEL_DATA, GRB>(pixels, total_pixels);  // GRB ordering is typical
   Serial.begin(115200);
 
   // Turn off nose.
