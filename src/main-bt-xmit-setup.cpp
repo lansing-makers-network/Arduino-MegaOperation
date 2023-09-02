@@ -351,7 +351,7 @@
 SoftwareSerial myBlueSerial(DPIN_BLUESRL_RX, DPIN_BLUESRL_TX);  // to talk to Bluetooth
 
 
-#define NUMWAIT 3000  // loopcount waiting for response from Bluetooth module
+#define NUMWAIT 2000  // loopcount waiting for response from Bluetooth module
 
 #define NUMOF(a) (sizeof((a)) / sizeof(*(a)))
 
@@ -396,7 +396,6 @@ char const *cmdsAddRAM[] = { cmd_AT, cmd_DISCON, cmd_VMLINK_RD, cmd_bld_ADDLINKA
 char const *cmdsClearRAM[] = { cmd_AT, cmd_DISCON, cmd_DELVMLINK, cmd_RESET, cmd_AT, cmd_VMLINK_RD };
 char const *cmdsDiscon[] = { cmd_AT, cmd_DISCON };
 char const *cmdsPowerOff[] = { cmd_AT, cmd_PWROFF };
-
 char const *menuOptions[CMD_COUNT] = { "\n0=PAIR", "\n1=SCAN", "\n2=DISPLAY", "\n3=ADD", "\n4=DELETE ALL", "\n5=STATUS", "\n6=Disconnect", "\n7=PowerOff module" };
 
 
