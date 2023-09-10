@@ -21,7 +21,8 @@ const byte PIN_SDCARD_CS = 4;       // OUT: Chip select for SD card
 const byte PIN_AUDIO_DREQ = 3;      //  IN: VS1053 Data request interrupt
 const byte PIN_AUDIO_RESET = -1;    // Reset not present on shield
 
+// Touch sensor
 const byte PIN_TOUCH_INT = 2;       //  IN: Touch sensor interrupt
 
 // Pins available
-// 19, 18, 14, 5
+// 14, 5
