@@ -375,7 +375,7 @@ char const *cmd_VOL_RD = "AT+VOL?";
 char const *cmd_VOL = "AT+VOL="; // range: 00-31 ?must be exactly 2 characters?
 char const *cmd_TOGGLE_PLAY_PAUSE = "AT+PAUSE";
 char const *cmd_PAIR = "AT+PAIR";
-// char const *cmd_SCAN = "AT+SCAN"; // GETS AN ERROR
+char const *cmd_SCAN = "AT+SCAN"; // GETS AN ERROR
 char const *cmd_DISCON = "AT+DISCON";
 char const *cmd_ADDLINKADD = "AT+ADDLINKADD=";  // NOTE: must be exactly 12 characters for hex string
 char const *cmd_ADDLINKNAME = "AT+ADDLINKNAME=";
@@ -389,9 +389,10 @@ char cmd_bld_ADDLINKNAME[64];  // must build these in RAM from user input
 #define CMD_MAX (CMD_COUNT-1)
 
 char const *cmdsPair[] = { cmd_AT, cmd_RESET, cmd_AT, cmd_PAIR };
-char const *cmdsScan[] = { cmd_AT, cmd_RESET, cmd_AT, cmd_AT, cmd_AT };
+//char const *cmdsScan[] = { cmd_AT, cmd_RESET, cmd_AT, cmd_AT, cmd_AT };
+char const *cmdsScan[] = { cmd_AT, cmd_SCAN };
 char const *cmdsDispRAM[] = { cmd_AT, cmd_VMLINK_RD };
-char const *cmdsXmtStatus[] = { cmd_AT, cmd_GMR_RD, cmd_BAUD_RD, cmd_BT_MODE_RD, cmd_AUD_CH_RD, /* cmd_BT_NAME_RD, cmd_BT_MAC_RD, */ cmd_VOL_RD, cmd_STATUS_RD };
+char const *cmdsXmtStatus[] = { cmd_AT, cmd_GMR_RD, cmd_BAUD_RD, cmd_BT_MODE_RD, cmd_AUD_CH_RD, cmd_BT_NAME_RD, cmd_BT_MAC_RD, cmd_VOL_RD, cmd_STATUS_RD };
 char const *cmdsAddRAM[] = { cmd_AT, cmd_DISCON, cmd_VMLINK_RD, cmd_bld_ADDLINKADD, cmd_bld_ADDLINKNAME, cmd_RESET, cmd_AT, cmd_VMLINK_RD };
 char const *cmdsClearRAM[] = { cmd_AT, cmd_DISCON, cmd_DELVMLINK, cmd_RESET, cmd_AT, cmd_VMLINK_RD };
 char const *cmdsDiscon[] = { cmd_AT, cmd_DISCON };
