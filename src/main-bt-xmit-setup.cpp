@@ -351,7 +351,7 @@
 SoftwareSerial myBlueSerial(DPIN_BLUESRL_RX, DPIN_BLUESRL_TX);  // to talk to Bluetooth
 
 
-#define NUMWAIT 3000  // loopcount waiting for response from Bluetooth module
+#define NUMWAIT 2000  // loopcount waiting for response from Bluetooth module
 
 #define NUMOF(a) (sizeof((a)) / sizeof(*(a)))
 

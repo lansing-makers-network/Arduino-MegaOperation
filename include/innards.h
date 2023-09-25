@@ -2,37 +2,37 @@ struct Organ {
     int start;
     int len;
     int sensor;
-    bool clockwise;
 };
 
-struct Organ NOSE =             {   0, 16, -1, false };
-struct Organ WRITERSCRAMP =     {  16, 29, 11,  true };
-struct Organ WRENCHEDANKLE =    {  46, 28, 10,  true };
-struct Organ BREADBASKET =      {  75, 22,  9,  true };
-struct Organ BUTTERFLIES =      {  98, 23,  8,  true };
-struct Organ BROKENHEART =      { 122, 15,  7,  true };
-struct Organ ADAMSAPPLE =       { 138, 21,  6,  true };
-struct Organ WISHBONE =         { 159, 26,  5,  true };
-struct Organ SPARERIBS =        { 186, 28,  4, false };
-struct Organ FUNNYBONE =        { 215, 21,  3,  true };
-struct Organ WATERONKNEE =      { 237, 25,  2,  true };
-struct Organ CHARLIEHORSE =     { 263, 25,  1,  true };
-struct Organ ANKLEBONE =        { 289, 46,  0,  true };
-
-const int ORGAN_COUNT = 13;
+struct Organ NOSE =            {   0, 16, -1 };
+struct Organ ANKLEBONE =       {  16, 47,  0 };
+struct Organ CHARLIEHORSE =    {  63, 26,  1 };
+struct Organ WATERONKNEE =     {  89, 26,  2 };
+struct Organ FUNNYBONE =       { 115, 23,  3 };
+struct Organ SPARERIBS =       { 138, 31,  4 };
+struct Organ WISHBONE =        { 169, 25,  5 };
+struct Organ ADAMSAPPLE =      { 194, 21,  6 };
+struct Organ BROKENHEART =     { 215, 16,  7 };
+struct Organ BUTTERFLIES =     { 231, 25,  8 };
+struct Organ BREADBASKET =     { 256, 23,  9 };
+struct Organ WRENCHEDANKLE =   { 279, 29, 10 };
+struct Organ WRITERSCRAMP =    { 308, 29, 11 };
 
 Organ const BodyMap[] = {
     NOSE,
-    WRITERSCRAMP,
-    WRENCHEDANKLE,
-    BREADBASKET,
-    BUTTERFLIES,
-    BROKENHEART,
-    ADAMSAPPLE,
-    WISHBONE,
-    SPARERIBS,
-    FUNNYBONE,
-    WATERONKNEE,
+    ANKLEBONE,
     CHARLIEHORSE,
-    ANKLEBONE
+    WATERONKNEE,
+    FUNNYBONE,
+    SPARERIBS,
+    WISHBONE,
+    ADAMSAPPLE,
+    BROKENHEART,
+    BUTTERFLIES,
+    BREADBASKET,
+    WRENCHEDANKLE,
+    WRITERSCRAMP 
 };
+
+const int ORGAN_COUNT = 13;
+const int PIXEL_COUNT = 337;

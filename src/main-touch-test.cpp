@@ -1,14 +1,25 @@
 #include <Arduino.h>
+#include <FastLED.h>
 #include <Wire.h>
-#include "Adafruit_MPR121.h"
+#include <Adafruit_MPR121.h>
+#include "pinmap.h"
+#include "innards.h"
 
-const uint8_t IRQ_PIN = 2;
 
 // I2C devices
 const uint8_t TOUCH_ADDR = 0x5A;
 
 // You can have up to 4 on one i2c bus but one is enough for testing!
 Adafruit_MPR121 touch = Adafruit_MPR121();
+
+// Pixels
+CRGB pixels[PIXEL_COUNT];
+
+// Colors
+const CRGB TOUCHED_COLOR = CRGB::Red;
+const CRGB UNTOUCHED_COLOR = CRGB::Yellow;
+
+uint16_t touchstate = 0;
 
 void touchEvent()
 {
@@ -19,22 +30,22 @@ void touchEvent()
   static uint16_t currtouched = 0;
 
   // Get the currently touched pads
-  currtouched = touch.touched();
-  
-  for (uint8_t i=0; i<12; i++) {
-    // it if *is* touched and *wasnt* touched before, alert!
-    if ((currtouched & _BV(i)) && !(lasttouched & _BV(i)) ) {
-      Serial.print(i); Serial.println(" touched");
+  touchstate = touch.touched();
+
+  CRGB color = UNTOUCHED_COLOR;
+  for (int i=1;  i<ORGAN_COUNT;  i++ ) {
+    uint16_t mask = 1 << (i-1);
+    if (touchstate & mask) {
+      color = TOUCHED_COLOR;
     }
-    // if it *was* touched and now *isnt*, alert!
-    if (!(currtouched & _BV(i)) && (lasttouched & _BV(i)) ) {
-      Serial.print(i); Serial.println(" released");
+
+    uint16_t offset = BodyMap[i].start;
+    for (int k=0;  k<BodyMap[i].len;  k++) {
+      pixels[k+offset] = color;
     }
   }
 
-  // reset our state
-  lasttouched = currtouched;
-
+  FastLED.show();
   // comment out this line for detailed data from the sensor!
   return;
   
@@ -57,8 +68,8 @@ void setup() {
   Serial.println("Adafruit MPR121 Capacitive Touch sensor test"); 
 
   //make sure the interrupt pin is an input and pulled high
-  pinMode(IRQ_PIN, INPUT);
-  digitalWrite(IRQ_PIN, HIGH);
+  pinMode(PIN_TOUCH_INT, INPUT);
+  digitalWrite(PIN_TOUCH_INT, HIGH);
 
   // Default address is 0x5A, if tied to 3.3V its 0x5B
   // If tied to SDA its 0x5C and if SCL then 0x5D
@@ -71,6 +82,10 @@ void setup() {
   // Create and interrupt to trigger when a button
   // is hit, the IRQ pin goes low, and the function getNumber is run. 
   attachInterrupt(0, touchEvent, LOW);
+
+  FastLED.addLeds<WS2812, PIN_PIXEL_DATA, GRB>(pixels, PIXEL_COUNT);  // GRB ordering is typical
+
+
 }
 
 void loop() {

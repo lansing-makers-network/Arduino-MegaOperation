@@ -7,7 +7,7 @@
 
 // Define the array of pixels
 const uint8_t nose_pixels = 16;
-const int16_t chaser_pixels = 344;
+const int16_t chaser_pixels = 321;
 const uint16_t total_pixels = nose_pixels + chaser_pixels;
 CRGB pixels[total_pixels];
 
