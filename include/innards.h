@@ -35,4 +35,6 @@ Organ const BodyMap[] = {
 };
 
 const int ORGAN_COUNT = 13;
-const int PIXEL_COUNT = 337;
+const int ORGAN_PIXEL_OFFSET = 16;
+const int ORGAN_PIXEL_COUNT = (337-16);
+const int TOTAL_PIXEL_COUNT = 337;
