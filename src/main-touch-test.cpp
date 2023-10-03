@@ -20,11 +20,11 @@ Adafruit_VS1053_FilePlayer audioPlayer = Adafruit_VS1053_FilePlayer(PIN_AUDIO_RE
 
 // Define the array of pixels
 const uint8_t nose_pixels = NOSE.len;
-const int16_t chaser_pixels = 84; // ORGAN_PIXEL_COUNT;
-const uint16_t total_pixels = 100; //TOTAL_PIXEL_COUNT;
+const int16_t chaser_pixels = ORGAN_PIXEL_COUNT;
+const uint16_t total_pixels = TOTAL_PIXEL_COUNT;
 CRGB pixels[total_pixels];
 
-// The first pixels are in the nose.  The "chaser" pixels are+
+// The first pixels are in the nose.  The "chaser" pixels are
 // the one we animate. Pixel positions are computed from 0 -- chaser_pixels - 1,
 // and the nose_offset is added when addressing the strip.
 
@@ -119,7 +119,7 @@ void setup() {
   //Serial.println("Start");
   FastLED.addLeds<WS2812, PIN_PIXEL_DATA, GRB>(pixels, total_pixels);  // GRB ordering is typical
 
-  delay(2000);
+  delay(1000);
   for (int8_t i=0;  i<16;  i++) {
     setNoseStatus(i, true);
     delay(50);
@@ -129,16 +129,16 @@ void setup() {
   setNoseStatus(0, true);
 
   // Set up touch sensor. Make sure the interrupt pin is an input and pulled high
-  pinMode(PIN_TOUCH_INT, INPUT);
-  digitalWrite(PIN_TOUCH_INT, HIGH);
+  //pinMode(PIN_TOUCH_INT, INPUT);
+  //digitalWrite(PIN_TOUCH_INT, HIGH);
 
   setNoseStatus(1, true);
 
   // Default address is 0x5A, if tied to 3.3V its 0x5B
   // If tied to SDA its 0x5C and if SCL then 0x5D
-  if (!touch.begin(TOUCH_ADDR, &Wire, 16, 8)) {
-    while(1);
-  }
+  //if (!touch.begin(TOUCH_ADDR, &Wire, 16, 8)) {
+  //  while(1);
+  //}
 
   setNoseStatus(2, true);
   // Create and interrupt to trigger when a button
@@ -160,17 +160,17 @@ void setup() {
   }
   setNoseStatus(5, true);
 
-  audioPlayer.playFullFile("/3beeps.mp3");
+  audioPlayer.startPlayingFile("/3beeps.mp3");
   setNoseStatus(6, true);
 }
 
 void loop() {
-    static uint8_t audioState = 5;
-    //if (audioPlayer.stopped()) {
-      //audioState = (audioState + 1) & 0x0F;
-      //setNoseStatus(audioState, false);
-    //  audioPlayer.startPlayingFile("/ic_back.mp3");
-    //}
+    static uint8_t audioState = 7;
+    if (audioPlayer.stopped()) {
+      audioState = (audioState + 1) & 0x0F;
+      setNoseStatus(audioState, false);
+      audioPlayer.startPlayingFile("/3beeps.mp3");
+    }
 
     // Advance .hue by .hue_step
     for (uint8_t l = 0;  l < layer_count;  l++){
@@ -218,12 +218,12 @@ void loop() {
     }
 
     // Overlay touched organs
-    touchstate = touch.touched();
-    for (int i=1;  i<ORGAN_COUNT;  i++) {
-      if (touchstate & (1 << BodyMap[i].sensor)) {
-        setOrganColor(i, CRGB::Red);
-      }
-    }
+    // touchstate = touch.touched();
+    // for (int i=1;  i<ORGAN_COUNT;  i++) {
+    //   if (touchstate & (1 << BodyMap[i].sensor)) {
+    //     setOrganColor(i, CRGB::Red);
+    //   }
+    // }
 
     FastLED.show();
 }
